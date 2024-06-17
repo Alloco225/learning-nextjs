@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { UserSchema } from "../schema";
 
 interface Props {
     params: {id: any}
@@ -15,8 +16,8 @@ export function GET(request: NextRequest, {params: {id}} : Props){
 
 export async function PUT(request: NextRequest, {params: {id}} : Props){
     const body = await request.json();
-
-    if(!body.name) return NextResponse.json({error: "Name is required"}, {status: 400})
+    const validation = UserSchema.safeParse(body);
+    if(!validation.success) return NextResponse.json(validation.error.errors, {status: 400})
 
     if(body.id > 10) return NextResponse.json({error: "User not found"}, {status: 404})
 
